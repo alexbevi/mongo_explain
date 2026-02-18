@@ -85,6 +85,7 @@ Notes:
 - UI mode is Rails-only.
 - When UI is enabled, the engine also enables `MONGO_EXPLAIN=1` in development.
 - Explain probes default to `Mongoid.default_client` when Mongoid is present.
+- UI cards are stacked/merged for repeated calls; for example `MongoExplain FIND (7)` means the same call pattern occurred 7 times, which may indicate another optimization opportunity.
 
 ### Console-Only / Standalone Library (Logger Output)
 
