@@ -2,6 +2,7 @@
 
 require "json"
 require "logger"
+require "bson"
 
 module MongoExplain
   module DevelopmentMonitor
