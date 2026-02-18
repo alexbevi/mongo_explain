@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["Alex Bevilacqua"]
   spec.email = ["alex@alexbevi.com"]
 
-  spec.summary = "MongoDB explain monitoring and in-app development overlay for Rails"
-  spec.description = "Standalone Rails engine for MongoDB explain logging and a realtime ActionCable UI overlay."
+  spec.summary = "MongoDB explain monitoring with optional Rails UI overlay"
+  spec.description = "Standalone MongoDB explain monitor with standard logger output and optional Rails-engine ActionCable overlay."
   spec.homepage = "https://github.com/alexbevi/mongo_explain"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.2.0"
@@ -22,7 +22,6 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "mongoid", ">= 9.0"
-  spec.add_dependency "rails", ">= 8.0"
+  spec.add_dependency "mongo", ">= 2.18", "< 3.0"
   spec.add_development_dependency "rspec", ">= 3.13"
 end

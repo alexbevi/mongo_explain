@@ -1,10 +1,13 @@
 # MongoExplain
 
-MongoExplain helps Rails + Mongoid teams spot expensive MongoDB queries during development.
+MongoExplain helps teams spot expensive MongoDB queries during development.
 
 It combines:
 - a low-noise explain monitor that writes structured summary/detail logs
 - an optional in-browser ActionCable overlay for live query-plan signals while you click through the app
+
+Core monitoring is usable without Rails. The UI overlay is Rails-engine-only.
+
 
 ## Detailed Use Case
 
@@ -57,9 +60,48 @@ Then install dependencies:
 bundle install
 ```
 
-## Enabling the Monitor
+## Usage Modes
 
-Core monitor:
+### Rails Engine Integration (Overlay + Logs)
+
+![Rails engine integration with in-app overlay](docs/ss01.png)
+
+Use this mode when you want explain visibility directly in your Rails app UI while navigating pages.
+
+1. Ensure the gem is available in your Rails app.
+2. Enable UI mode:
+
+```bash
+export MONGO_EXPLAIN_UI=1
+```
+
+3. Render the overlay partial in your layout:
+
+```erb
+<%= render "mongo_explain/ui/overlay" %>
+```
+
+Notes:
+- UI mode is Rails-only.
+- When UI is enabled, the engine also enables `MONGO_EXPLAIN=1` in development.
+- Explain probes default to `Mongoid.default_client` when Mongoid is present.
+
+### Console-Only / Standalone Library (Logger Output)
+
+![Console-only usage with logger output](docs/ss02.png)
+
+Use this mode when you want query-plan monitoring without Rails or without the UI overlay.
+
+Configure a Mongo client provider (required for explain probes in standalone mode):
+
+```ruby
+MongoExplain::DevelopmentMonitor.configure do |config|
+  config.client_provider = -> { mongo_client } # Mongo::Client-compatible
+  # config.logger = Logger.new($stdout)         # optional custom logger
+end
+```
+
+Enable monitor mode:
 
 ```bash
 export MONGO_EXPLAIN=1
@@ -69,20 +111,6 @@ Optional restriction (log only plans containing `COLLSCAN`):
 
 ```bash
 export MONGO_EXPLAIN_ONLY_COLLSCAN=1
-```
-
-## Enabling the Overlay UI
-
-```bash
-export MONGO_EXPLAIN_UI=1
-```
-
-When UI is enabled, the engine also enables `MONGO_EXPLAIN=1` in development.
-
-Render the overlay partial in your application layout:
-
-```erb
-<%= render "mongo_explain/ui/overlay" %>
 ```
 
 ## Environment Flags

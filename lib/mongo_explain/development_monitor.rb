@@ -3,6 +3,9 @@
 require "json"
 require "logger"
 require "bson"
+require "date"
+require "time"
+require "bigdecimal"
 
 module MongoExplain
   module DevelopmentMonitor
@@ -63,6 +66,18 @@ module MongoExplain
       def failed(_event); end
     end
 
+    def configure
+      yield(self)
+    end
+
+    def client_provider=(provider)
+      @client_provider = provider
+    end
+
+    def logger=(custom_logger)
+      @logger = custom_logger
+    end
+
     def install!
       return unless enabled?
       return if @installed
@@ -104,6 +119,8 @@ module MongoExplain
       return if explain_target.nil?
 
       explain_result = run_explain(payload[:database_name], explain_target)
+      return if explain_result.nil?
+
       winning_plan = winning_plan_for(explain_result)
       return if LOG_ONLY_COLLSCAN && !collscan_plan?(winning_plan)
       execution_stats = execution_stats_for(explain_result)
@@ -159,12 +176,27 @@ module MongoExplain
     end
 
     def run_explain(database_name, explain_target)
+      client = explain_client
+      return nil if client.nil?
+
       command = {
         "explain" => explain_target,
         "verbosity" => "executionStats",
         "comment" => EXPLAIN_COMMENT
       }
-      result = Mongoid.default_client.use(database_name).database.command(command)
+
+      selected_client =
+        if present_value?(database_name) && client.respond_to?(:use)
+          client.use(database_name)
+        else
+          client
+        end
+      return nil unless selected_client.respond_to?(:database)
+
+      database = selected_client.database
+      return nil unless database.respond_to?(:command)
+
+      result = database.command(command)
       if result.respond_to?(:documents)
         result.documents.first || {}
       elsif result.respond_to?(:first)
@@ -172,6 +204,31 @@ module MongoExplain
       else
         result || {}
       end
+    rescue StandardError => e
+      logger.debug("[MongoExplain] explain command failed: #{e.class}: #{e.message}")
+      nil
+    end
+
+    def explain_client
+      provider = client_provider
+      return nil unless provider.respond_to?(:call)
+
+      provider.call
+    rescue StandardError => e
+      logger.debug("[MongoExplain] client provider failed: #{e.class}: #{e.message}")
+      nil
+    end
+
+    def client_provider
+      return @client_provider if defined?(@client_provider)
+
+      @client_provider = default_client_provider
+    end
+
+    def default_client_provider
+      return nil unless defined?(Mongoid) && Mongoid.respond_to?(:default_client)
+
+      proc { Mongoid.default_client }
     end
 
     def explain_target_for(command_name, command)
@@ -394,7 +451,12 @@ module MongoExplain
       development_mode? &&
         ENV["MONGO_EXPLAIN"] == "1" &&
         defined?(Mongo::Monitoring::Global) &&
-        defined?(Mongo::Monitoring::COMMAND)
+        defined?(Mongo::Monitoring::COMMAND) &&
+        explain_client_configured?
+    end
+
+    def explain_client_configured?
+      client_provider.respond_to?(:call)
     end
 
     def logger
