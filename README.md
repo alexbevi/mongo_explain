@@ -1,6 +1,6 @@
 # MongoExplain
 
-MongoExplain helps teams spot expensive MongoDB queries during development.
+MongoExplain helps teams spot expensive and unindexed MongoDB operations during development, with guidance aligned to MongoDB [Query Optimization](https://www.mongodb.com/docs/manual/core/query-optimization/) best practices.
 
 It combines:
 - a low-noise explain monitor that writes structured summary/detail logs
