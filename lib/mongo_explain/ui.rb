@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "development_monitor"
+require_relative "monitor"
 require_relative "ui/configuration"
 require_relative "ui/event"
 require_relative "ui/broadcaster"

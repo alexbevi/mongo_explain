@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe MongoExplain::DevelopmentMonitor do
+RSpec.describe MongoExplain::Monitor do
   let(:aggregate_explain_result) do
     {
       "stages" => [
@@ -38,7 +38,7 @@ RSpec.describe MongoExplain::DevelopmentMonitor do
   it "extracts winning plan from aggregate cursor stage explains" do
     winning_plan = described_class.winning_plan_for(aggregate_explain_result)
 
-    expect(winning_plan).to be_present
+    expect(winning_plan).not_to be_nil
     expect(described_class.plan_stage_path(winning_plan)).to eq("SORT>COLLSCAN")
   end
 
@@ -60,6 +60,10 @@ RSpec.describe MongoExplain::DevelopmentMonitor do
     )
 
     expect(namespace).to eq("treasurer.teams")
+  end
+
+  it "keeps DevelopmentMonitor as a compatibility alias" do
+    expect(MongoExplain::DevelopmentMonitor).to eq(described_class)
   end
 
   describe "standalone client-provider behavior" do
@@ -91,7 +95,7 @@ RSpec.describe MongoExplain::DevelopmentMonitor do
       database = double("database")
       allow(database).to receive(:command) do |command|
         command_calls << command
-        [ { "ok" => 1 } ]
+        [{ "ok" => 1 }]
       end
 
       selected_client = double("selected_client", database: database)
@@ -104,7 +108,7 @@ RSpec.describe MongoExplain::DevelopmentMonitor do
       expect(result).to eq({ "ok" => 1 })
       expect(command_calls.length).to eq(1)
       expect(command_calls.first["verbosity"]).to eq("executionStats")
-      expect(command_calls.first["comment"]).to eq(MongoExplain::DevelopmentMonitor::EXPLAIN_COMMENT)
+      expect(command_calls.first["comment"]).to eq(MongoExplain::Monitor::EXPLAIN_COMMENT)
     end
   end
 end

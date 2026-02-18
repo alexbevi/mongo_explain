@@ -7,7 +7,7 @@ This repository contains the standalone `mongo_explain` Rails engine/gem extract
 - Ruby gem with optional Rails engine integration (`mongo_explain`)
 - Primary entrypoint: `lib/mongo_explain.rb`
 - Main layers:
-  - Core monitor: `lib/mongo_explain/development_monitor.rb`
+  - Core monitor: `lib/mongo_explain/monitor.rb`
   - UI engine + overlay: `lib/mongo_explain/ui/*`
 
 ## Critical Rules
@@ -59,7 +59,8 @@ This repository contains the standalone `mongo_explain` Rails engine/gem extract
 ├── lib/
 │   ├── mongo_explain.rb
 │   └── mongo_explain/
-│       ├── development_monitor.rb
+│       ├── monitor.rb
+│       ├── development_monitor.rb # compatibility shim
 │       ├── version.rb
 │       └── ui/
 ├── spec/
@@ -70,7 +71,7 @@ This repository contains the standalone `mongo_explain` Rails engine/gem extract
 ## Common Tasks
 
 ### Update explain parsing logic
-1. Edit `lib/mongo_explain/development_monitor.rb`
+1. Edit `lib/mongo_explain/monitor.rb`
 2. Add/update specs in `spec/lib/mongo_explain/`
 3. Verify summary/detail log shape remains stable
 
@@ -89,5 +90,5 @@ This repository contains the standalone `mongo_explain` Rails engine/gem extract
 ```bash
 bundle install
 bundle exec rspec
-bundle exec rspec spec/lib/mongo_explain/development_monitor_spec.rb
+bundle exec rspec spec/lib/mongo_explain/monitor_spec.rb
 ```

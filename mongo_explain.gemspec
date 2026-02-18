@@ -23,5 +23,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "mongo", ">= 2.18", "< 3.0"
+  spec.add_dependency "bigdecimal"
   spec.add_development_dependency "rspec", ">= 3.13"
 end

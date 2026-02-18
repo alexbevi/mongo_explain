@@ -2,7 +2,6 @@
 
 require "bundler/setup"
 require "mongo_explain"
-require "active_support/core_ext/object/blank"
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

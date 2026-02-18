@@ -51,11 +51,11 @@ module MongoExplain
         end
       end
 
-      initializer "mongo_explain.ui.development_monitor" do |app|
+      initializer "mongo_explain.ui.monitor" do |app|
         app.config.after_initialize do
-          next unless defined?(MongoExplain::DevelopmentMonitor)
+          next unless defined?(MongoExplain::Monitor)
 
-          MongoExplain::DevelopmentMonitor.install!
+          MongoExplain::Monitor.install!
         end
       end
     end

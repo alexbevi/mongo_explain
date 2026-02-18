@@ -58,7 +58,7 @@ Use this mode when you want query-plan monitoring without Rails or without the U
 Configure a client provider (required for explain probes in standalone mode):
 
 ```ruby
-MongoExplain::DevelopmentMonitor.configure do |config|
+MongoExplain::Monitor.configure do |config|
   config.client_provider = -> { mongo_client } # Mongo::Client-compatible
   # config.logger = Logger.new($stdout)         # optional custom logger
 end
