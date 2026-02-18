@@ -1,0 +1,256 @@
+.mongo-explain-ui-overlay {
+  pointer-events: none;
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 50;
+  width: calc(100vw - 2rem);
+  max-width: 24rem;
+}
+
+.mongo-explain-ui-overlay__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mongo-explain-ui-overlay__status {
+  margin-top: 0.5rem;
+}
+
+.mongo-explain-ui-status-bar {
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid #bae6fd;
+  border-radius: 0.375rem;
+  background-color: #eff6ff;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.75rem;
+  color: #334155;
+}
+
+.mongo-explain-ui-status-bar__label {
+  font-weight: 600;
+}
+
+.mongo-explain-ui-status-bar__separator {
+  color: #64748b;
+}
+
+.mongo-explain-ui-status-bar__link {
+  border: 0;
+  background: transparent;
+  color: #1d4ed8;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.mongo-explain-ui-status-bar__link:hover {
+  color: #1e40af;
+}
+
+.mongo-explain-ui-card {
+  pointer-events: auto;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #bae6fd;
+  border-radius: 0.375rem;
+  background-color: #eff6ff;
+  padding: 0.75rem;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+  position: relative;
+}
+
+.mongo-explain-ui-card__title {
+  padding-right: 1.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #334155;
+}
+
+.mongo-explain-ui-card__message {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+
+.mongo-explain-ui-card__meta {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.mongo-explain-ui-card__dismiss {
+  position: absolute;
+  right: 0.5rem;
+  top: 0.2rem;
+  border: 0;
+  background: transparent;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.mongo-explain-ui-card__dismiss:hover {
+  color: #0f172a;
+}
+
+.mongo-explain-ui-card--warn {
+  border-color: #fcd34d;
+}
+
+.mongo-explain-ui-card--other {
+  border-color: #fde68a;
+  background-color: #fefce8;
+}
+
+.mongo-explain-ui-card--other .mongo-explain-ui-card__title {
+  color: #92400e;
+}
+
+.mongo-explain-ui-card--other .mongo-explain-ui-card__message {
+  color: #78350f;
+}
+
+.mongo-explain-ui-card--other .mongo-explain-ui-card__meta {
+  color: #92400e;
+}
+
+.mongo-explain-ui-card--other .mongo-explain-ui-card__dismiss {
+  color: #92400e;
+}
+
+.mongo-explain-ui-card--other .mongo-explain-ui-card__dismiss:hover {
+  color: #78350f;
+}
+
+.mongo-explain-ui-card--collscan {
+  border-color: #fecaca;
+  background-color: #fef2f2;
+}
+
+.mongo-explain-ui-card--collscan .mongo-explain-ui-card__title {
+  color: #9f1239;
+}
+
+.mongo-explain-ui-card--collscan .mongo-explain-ui-card__message {
+  color: #881337;
+}
+
+.mongo-explain-ui-card--collscan .mongo-explain-ui-card__meta {
+  color: #9f1239;
+}
+
+.mongo-explain-ui-card--collscan .mongo-explain-ui-card__dismiss {
+  color: #9f1239;
+}
+
+.mongo-explain-ui-card--collscan .mongo-explain-ui-card__dismiss:hover {
+  color: #881337;
+}
+
+.mongo-explain-ui-card--error {
+  border-color: #fda4af;
+}
+
+.dark .mongo-explain-ui-card {
+  background-color: #0f1f3d;
+  border-color: #1d4ed8;
+}
+
+.dark .mongo-explain-ui-status-bar {
+  background-color: #0f1f3d;
+  border-color: #1d4ed8;
+  color: #bfdbfe;
+}
+
+.dark .mongo-explain-ui-status-bar__separator {
+  color: #93c5fd;
+}
+
+.dark .mongo-explain-ui-status-bar__link {
+  color: #93c5fd;
+}
+
+.dark .mongo-explain-ui-status-bar__link:hover {
+  color: #dbeafe;
+}
+
+.dark .mongo-explain-ui-card__title {
+  color: #bfdbfe;
+}
+
+.dark .mongo-explain-ui-card__message {
+  color: #dbeafe;
+}
+
+.dark .mongo-explain-ui-card__meta {
+  color: #93c5fd;
+}
+
+.dark .mongo-explain-ui-card__dismiss {
+  color: #93c5fd;
+}
+
+.dark .mongo-explain-ui-card__dismiss:hover {
+  color: #dbeafe;
+}
+
+.dark .mongo-explain-ui-card--collscan {
+  border-color: #7f1d1d;
+  background-color: #450a0a;
+}
+
+.dark .mongo-explain-ui-card--other {
+  border-color: #854d0e;
+  background-color: #422006;
+}
+
+.dark .mongo-explain-ui-card--other .mongo-explain-ui-card__title {
+  color: #fde68a;
+}
+
+.dark .mongo-explain-ui-card--other .mongo-explain-ui-card__message {
+  color: #fef3c7;
+}
+
+.dark .mongo-explain-ui-card--other .mongo-explain-ui-card__meta {
+  color: #fcd34d;
+}
+
+.dark .mongo-explain-ui-card--other .mongo-explain-ui-card__dismiss {
+  color: #fcd34d;
+}
+
+.dark .mongo-explain-ui-card--other .mongo-explain-ui-card__dismiss:hover {
+  color: #fef3c7;
+}
+
+.dark .mongo-explain-ui-card--collscan .mongo-explain-ui-card__title {
+  color: #fecdd3;
+}
+
+.dark .mongo-explain-ui-card--collscan .mongo-explain-ui-card__message {
+  color: #ffe4e6;
+}
+
+.dark .mongo-explain-ui-card--collscan .mongo-explain-ui-card__meta {
+  color: #fda4af;
+}
+
+.dark .mongo-explain-ui-card--collscan .mongo-explain-ui-card__dismiss {
+  color: #fda4af;
+}
+
+.dark .mongo-explain-ui-card--collscan .mongo-explain-ui-card__dismiss:hover {
+  color: #ffe4e6;
+}

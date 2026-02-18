@@ -1,0 +1,13 @@
+<% return unless mongo_explain_overlay_enabled? %>
+
+<%= stylesheet_link_tag "mongo_explain/ui_overlay", "data-turbo-track": "reload" %>
+<%= javascript_import_module_tag "mongo_explain/ui_overlay" %>
+
+<div class="mongo-explain-ui-overlay"
+     data-mongo-explain-ui-overlay
+     data-channel="MongoExplain::Ui::Channel"
+     data-max-stack="<%= mongo_explain_overlay_max_stack %>"
+     data-default-ttl-ms="<%= mongo_explain_overlay_default_ttl_ms %>"
+     data-level-styles="<%= json_escape(MongoExplain::Ui.configuration.level_styles.to_json) %>">
+  <div class="mongo-explain-ui-overlay__stack" data-stack></div>
+</div>
