@@ -24,34 +24,13 @@ Instead of manually running one-off shell queries, MongoExplain continuously sam
 - **detail logs** (JSON payloads) when plans are high-risk (`COLLSCAN`) or unrecognized (`UNKNOWN`)
 - **optional UI cards** in the browser to surface plan problems in the same flow where they occur
 
-## Architecture
-
-Main entrypoint:
-- `lib/mongo_explain.rb`
-
-Layers:
-- Core monitor: `lib/mongo_explain/development_monitor.rb`
-- UI engine + overlay: `lib/mongo_explain/ui/*`
-
-Core monitor responsibilities:
-- Subscribes to Mongo command monitoring events
-- Watches supported read commands (`find`, `aggregate`, `count`, `distinct`)
-- Runs `explain` probes with `executionStats` verbosity
-- Emits concise and detailed logs
-- Emits normalized UI events when UI is enabled
-
-UI layer responsibilities:
-- ActionCable channel + broadcaster
-- Overlay event formatting, dedupe/stack behavior, dismissal/TTL behavior
-- Engine-driven importmap/assets/helper wiring
-
 ## Installation
 
 Use as a local path gem from a host app:
 
 ```ruby
 # Gemfile
-gem "mongo_explain", path: "../mongo_explain"
+gem "mongo_explain", git: "https://github.com/alexbevi/mongo_explain.git"
 ```
 
 Then install dependencies:
