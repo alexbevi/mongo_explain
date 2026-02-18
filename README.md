@@ -120,6 +120,18 @@ Summary logs include:
 - index names
 - `nReturned`, docs examined, keys examined, execution ms
 
+### Why callsite matters
+
+`callsite` is one of the highest-value fields in the summary output. It points to where in the Ruby/Rails codebase the monitored MongoDB operation originated (for example an `app/controllers/...` or `app/services/...` location).
+
+Use `callsite` to:
+- map a slow or `COLLSCAN` query plan back to the exact application path that triggered it
+- separate framework/internal queries from your own application queries
+- detect repeated query patterns coming from a specific controller action, serializer, policy scope, or service object
+- prioritize optimization work by fixing the highest-frequency callsites first
+
+In practice, `callsite` helps you move from “this query is expensive” to “this exact code path is producing the expensive query.”
+
 Detail logs include JSON payloads for:
 - explain target command
 - winning plan
