@@ -1,19 +1,20 @@
 # MongoExplain
 
-MongoExplain helps teams spot expensive and unindexed MongoDB operations during development, with guidance aligned to MongoDB [Query Optimization](https://www.mongodb.com/docs/manual/core/query-optimization/) best practices.
+MongoExplain helps teams spot expensive and unindexed MongoDB operations during development, surfacing opportunities for developers to apply MongoDB [Query Optimization](https://www.mongodb.com/docs/manual/core/query-optimization/) best practices.
 
 It combines:
 - a low-noise explain monitor that writes structured summary/detail logs
 - an optional in-browser ActionCable overlay for live query-plan signals while you click through the app
 
-Core monitoring is usable without Rails. The UI overlay is Rails-engine-only.
+Core monitoring is usable from any Ruby application, but the UI overlay is Rails-only. Having the Rails engine activated can make it apparent where the application is making database calls you don't expect - such as when [Turbo prefetching is enabled](https://turbo.hotwired.dev/handbook/drive#prefetching-links-on-hover).
 
 ## Development-Only Usage
 
 MongoExplain should only be used in development environments.
 
-It relies on [MongoDB Ruby command event monitoring](https://www.mongodb.com/docs/ruby-driver/current/logging-and-monitoring/monitoring/#std-label-ruby-command-monitoring) to capture raw database commands, duplicate those command shapes, and generate [`explain` plans](https://www.mongodb.com/docs/manual/reference/command/explain/) using [`executionStats` verbosity](https://www.mongodb.com/docs/manual/reference/command/explain/#std-label-ex-executionStats), which adds overhead and is not intended for production traffic.
+It relies on the [MongoDB Ruby driver's command event monitoring](https://www.mongodb.com/docs/ruby-driver/current/logging-and-monitoring/monitoring/#std-label-ruby-command-monitoring) to capture raw database commands, duplicate those command shapes, and generate [`explain` plans](https://www.mongodb.com/docs/manual/reference/command/explain/) using [`executionStats` verbosity](https://www.mongodb.com/docs/manual/reference/command/explain/#std-label-ex-executionStats), which adds overhead and is not intended for production traffic.
 
+See MongoDB's [Command Logging and Monitoring](https://alexbevi.com/specifications/command-logging-and-monitoring/command-logging-and-monitoring.html) specification for more detail.
 
 ## Detailed Use Case
 
@@ -32,17 +33,9 @@ Instead of manually running one-off shell queries, MongoExplain continuously sam
 
 ## Installation
 
-Use as a local path gem from a host app:
-
 ```ruby
 # Gemfile
 gem "mongo_explain", git: "https://github.com/alexbevi/mongo_explain.git"
-```
-
-Then install dependencies:
-
-```bash
-bundle install
 ```
 
 ## Usage Modes
