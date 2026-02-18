@@ -27,11 +27,8 @@ Typical scenarios:
 - you want callsite-level query-plan visibility without opening `explain` manually for every operation
 
 Instead of manually running one-off shell queries, MongoExplain continuously samples supported read commands and gives you:
-- **summary logs** for operation + namespace + plan + docs/keys examined + execution time
+- **summary logs** for operation + namespace + plan + docs/keys examined + execution time such as: `[MongoExplain] callsite=app/models/concerns/team_financial_calculations.rb:112 op=aggregate ns=treasurer.transactions plan=GROUP>FETCH>IXSCAN index=team_id_1_transaction_date_-1 returned=1 docs=209 keys=209 ms=5`
 
-```log
-[MongoExplain] callsite=app/models/concerns/team_financial_calculations.rb:112 op=aggregate ns=treasurer.transactions plan=GROUP>FETCH>IXSCAN index=team_id_1_transaction_date_-1 returned=1 docs=209 keys=209 ms=5
-```
 
 - **detail logs** (JSON payloads) when plans are high-risk (`COLLSCAN`) or unrecognized (`UNKNOWN`)
 - **optional UI cards** in the browser to surface plan problems in the same flow where they occur
