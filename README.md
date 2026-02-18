@@ -121,15 +121,3 @@ Detail logs include JSON payloads for:
 Detail logs are emitted when:
 - winning plan contains `COLLSCAN`, or
 - computed plan path resolves to `UNKNOWN`
-
-## Development
-
-```bash
-bundle install
-bundle exec rspec
-bundle exec rspec spec/lib/mongo_explain/development_monitor_spec.rb
-```
-
-## License
-
-MIT. See `LICENSE`.
