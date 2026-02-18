@@ -12,12 +12,7 @@ Core monitoring is usable without Rails. The UI overlay is Rails-engine-only.
 
 MongoExplain should only be used in development environments.
 
-It relies on MongoDB Ruby driver command event monitoring to capture raw database commands, duplicate those command shapes, and generate `explain` plans using `executionStats` verbosity, which adds overhead and is not intended for production traffic.
-
-References:
-- MongoDB Ruby command monitoring: <https://www.mongodb.com/docs/ruby-driver/current/logging-and-monitoring/monitoring/#std-label-ruby-command-monitoring>
-- MongoDB `explain` command: <https://www.mongodb.com/docs/manual/reference/command/explain/>
-- `executionStats` verbosity: <https://www.mongodb.com/docs/manual/reference/command/explain/#std-label-ex-executionStats>
+It relies on [MongoDB Ruby command event monitoring](https://www.mongodb.com/docs/ruby-driver/current/logging-and-monitoring/monitoring/#std-label-ruby-command-monitoring) to capture raw database commands, duplicate those command shapes, and generate [`explain` plans](https://www.mongodb.com/docs/manual/reference/command/explain/) using [`executionStats` verbosity](https://www.mongodb.com/docs/manual/reference/command/explain/#std-label-ex-executionStats), which adds overhead and is not intended for production traffic.
 
 
 ## Detailed Use Case
