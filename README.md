@@ -1,37 +1,18 @@
 # MongoExplain
 
-MongoExplain helps teams spot expensive and unindexed MongoDB operations during development, surfacing opportunities for developers to apply MongoDB [Query Optimization](https://www.mongodb.com/docs/manual/core/query-optimization/) best practices.
+MongoExplain is development-only tooling for spotting expensive and unindexed MongoDB operations, helping developers apply MongoDB [Query Optimization](https://www.mongodb.com/docs/manual/core/query-optimization/) best practices.
 
 It combines:
 - a low-noise explain monitor that writes structured summary/detail logs
-- an optional in-browser ActionCable overlay for live query-plan signals while you click through the app
-
-Core monitoring is usable from any Ruby application, but the UI overlay is Rails-only. Having the Rails engine activated can make it apparent where the application is making database calls you don't expect - such as when [Turbo prefetching is enabled](https://turbo.hotwired.dev/handbook/drive#prefetching-links-on-hover).
+- an optional Rails ActionCable overlay for live query-plan feedback in the browser
 
 ## Development-Only Usage
 
 MongoExplain should only be used in development environments.
 
-It relies on the [MongoDB Ruby driver's command event monitoring](https://www.mongodb.com/docs/ruby-driver/current/logging-and-monitoring/monitoring/#std-label-ruby-command-monitoring) to capture raw database commands, duplicate those command shapes, and generate [`explain` plans](https://www.mongodb.com/docs/manual/reference/command/explain/) using [`executionStats` verbosity](https://www.mongodb.com/docs/manual/reference/command/explain/#std-label-ex-executionStats), which adds overhead and is not intended for production traffic.
+It relies on the [MongoDB Ruby driver's command event monitoring](https://www.mongodb.com/docs/ruby-driver/current/logging-and-monitoring/monitoring/#std-label-ruby-command-monitoring) to capture raw commands, duplicate command shapes, and generate [`explain` plans](https://www.mongodb.com/docs/manual/reference/command/explain/) with [`executionStats` verbosity](https://www.mongodb.com/docs/manual/reference/command/explain/#std-label-ex-executionStats). This adds overhead and is not intended for production traffic.
 
-See MongoDB's [Command Logging and Monitoring](https://alexbevi.com/specifications/command-logging-and-monitoring/command-logging-and-monitoring.html) specification for more detail.
-
-## Detailed Use Case
-
-MongoExplain is built for apps where MongoDB queries are generated across many controllers/services and it is hard to see, in context, when query plans regress.
-
-Typical scenarios:
-- a list page suddenly feels slower after a filter/sort change
-- a query that used to use an index now scans full collections (`COLLSCAN`)
-- multiple teams are changing query code and you want a consistent development feedback loop
-- you want callsite-level query-plan visibility without opening `explain` manually for every operation
-
-Instead of manually running one-off shell queries, MongoExplain continuously samples supported read commands and gives you:
-- **summary logs** for operation + namespace + plan + docs/keys examined + execution time such as: `[MongoExplain] callsite=app/models/concerns/team_financial_calculations.rb:112 op=aggregate ns=treasurer.transactions plan=GROUP>FETCH>IXSCAN index=team_id_1_transaction_date_-1 returned=1 docs=209 keys=209 ms=5`
-
-
-- **detail logs** (JSON payloads) when plans are high-risk (`COLLSCAN`) or unrecognized (`UNKNOWN`)
-- **optional UI cards** in the browser to surface plan problems in the same flow where they occur
+For deeper protocol details, see MongoDB's [Command Logging and Monitoring](https://alexbevi.com/specifications/command-logging-and-monitoring/command-logging-and-monitoring.html) specification.
 
 ## Installation
 
@@ -46,7 +27,7 @@ gem "mongo_explain", git: "https://github.com/alexbevi/mongo_explain.git"
 
 ![Rails engine integration with in-app overlay](docs/ss01.png)
 
-Use this mode when you want explain visibility directly in your Rails app UI while navigating pages.
+Use this mode when you want explain visibility directly in the app UI while navigating pages.
 
 1. Ensure the gem is available in your Rails app.
 2. Enable UI mode:
@@ -65,7 +46,8 @@ Notes:
 - UI mode is Rails-only.
 - When UI is enabled, the engine also enables `MONGO_EXPLAIN=1` in development.
 - Explain probes default to `Mongoid.default_client` when Mongoid is present.
-- UI cards are stacked/merged for repeated calls; for example `MongoExplain FIND (7)` means the same call pattern occurred 7 times, which may indicate another optimization opportunity.
+- UI cards are merged/stacked for repeated calls (example: `MongoExplain FIND (7)`), which can reveal repeated-query optimization opportunities.
+- This can also expose unexpected query activity from navigation behavior (for example, when [Turbo prefetching is enabled](https://turbo.hotwired.dev/handbook/drive#prefetching-links-on-hover)).
 
 ### Console-Only / Standalone Library (Logger Output)
 
@@ -73,7 +55,7 @@ Notes:
 
 Use this mode when you want query-plan monitoring without Rails or without the UI overlay.
 
-Configure a Mongo client provider (required for explain probes in standalone mode):
+Configure a client provider (required for explain probes in standalone mode):
 
 ```ruby
 MongoExplain::DevelopmentMonitor.configure do |config|
@@ -97,13 +79,13 @@ export MONGO_EXPLAIN_ONLY_COLLSCAN=1
 ## Environment Flags
 
 - `MONGO_EXPLAIN=1`: enable explain monitoring
-- `MONGO_EXPLAIN_ONLY_COLLSCAN=1`: limit logs/events to plans containing `COLLSCAN`
-- `MONGO_EXPLAIN_UI=1`: enable development overlay
+- `MONGO_EXPLAIN_ONLY_COLLSCAN=1`: log/event only plans containing `COLLSCAN`
+- `MONGO_EXPLAIN_UI=1`: enable development overlay (Rails only)
 - `MONGO_EXPLAIN_UI_CHANNEL`: override ActionCable channel name (default `mongo_explain:ui`)
 - `MONGO_EXPLAIN_UI_MAX_STACK`: max visible overlay cards (default `5`)
 - `MONGO_EXPLAIN_UI_TTL_MS`: default card TTL in milliseconds (default `12000`)
 
-## Logging Behavior
+## Logging Output
 
 MongoExplain prefers `Rails.logger` when Rails is loaded and falls back to a standard Ruby logger on `$stdout` otherwise.
 
@@ -115,17 +97,21 @@ Summary logs include:
 - index names
 - `nReturned`, docs examined, keys examined, execution ms
 
+Example summary line:
+
+```text
+[MongoExplain] callsite=app/models/concerns/team_financial_calculations.rb:112 op=aggregate ns=treasurer.transactions plan=GROUP>FETCH>IXSCAN index=team_id_1_transaction_date_-1 returned=1 docs=209 keys=209 ms=5
+```
+
 ### Why callsite matters
 
-`callsite` is one of the highest-value fields in the summary output. It points to where in the Ruby/Rails codebase the monitored MongoDB operation originated (for example an `app/controllers/...` or `app/services/...` location).
+`callsite` is one of the highest-value fields. It points to where in the Ruby/Rails codebase the monitored operation originated (for example `app/controllers/...` or `app/services/...`).
 
 Use `callsite` to:
-- map a slow or `COLLSCAN` query plan back to the exact application path that triggered it
-- separate framework/internal queries from your own application queries
-- detect repeated query patterns coming from a specific controller action, serializer, policy scope, or service object
-- prioritize optimization work by fixing the highest-frequency callsites first
-
-In practice, `callsite` helps you move from “this query is expensive” to “this exact code path is producing the expensive query.”
+- map a slow or `COLLSCAN` plan to the exact triggering code path
+- separate framework/internal queries from application queries
+- detect repeated query patterns from specific actions/scopes/services
+- prioritize fixes by frequency and impact
 
 Detail logs include JSON payloads for:
 - explain target command
