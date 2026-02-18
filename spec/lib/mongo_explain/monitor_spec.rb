@@ -62,9 +62,6 @@ RSpec.describe MongoExplain::Monitor do
     expect(namespace).to eq("treasurer.teams")
   end
 
-  it "keeps DevelopmentMonitor as a compatibility alias" do
-    expect(MongoExplain::DevelopmentMonitor).to eq(described_class)
-  end
 
   describe "standalone client-provider behavior" do
     around do |example|

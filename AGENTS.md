@@ -60,7 +60,6 @@ This repository contains the standalone `mongo_explain` Rails engine/gem extract
 │   ├── mongo_explain.rb
 │   └── mongo_explain/
 │       ├── monitor.rb
-│       ├── development_monitor.rb # compatibility shim
 │       ├── version.rb
 │       └── ui/
 ├── spec/

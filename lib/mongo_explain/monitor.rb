@@ -35,7 +35,6 @@ module MongoExplain
     SKIPPED_CALLSITE_FILES = %w[
       config/initializers/mongoid.rb
       lib/mongo_explain/monitor.rb
-      lib/mongo_explain/development_monitor.rb
     ].freeze
     class BasicLogger
       def initialize(io, progname: nil)
@@ -485,5 +484,4 @@ module MongoExplain
     end
   end
 
-  DevelopmentMonitor = Monitor unless const_defined?(:DevelopmentMonitor, false)
 end
